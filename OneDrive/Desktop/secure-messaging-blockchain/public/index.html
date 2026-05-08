@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Messaging</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+body{
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1400&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}
+</style>
+<style>
+body{
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1400&q=80');
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+}
+/* Button style */
+.btn-custom{
+    padding:12px 25px;
+    border-radius:8px;
+    text-decoration:none;
+    margin-right:10px;
+    display:inline-block;
+    transition:0.3s;
+}
+
+/* Login button */
+.login-btn{
+    background:white;
+    color:#333;
+}
+
+/* Register button */
+.register-btn{
+    background:#ffd700;
+    color:#333;
+}
+
+/* Hover effect */
+.btn-custom:hover{
+    transform: scale(1.08);
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+h1{
+    color:#ffffff;
+    font-weight:600;
+    text-shadow:0 2px 10px rgba(0,0,0,0.7);
+}
+.feature-card{
+    transition:0.3s;
+}
+
+.feature-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 35px rgba(0,0,0,0.4);
+}
+</style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div style="max-width:600px;margin:40px auto;text-align:center;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);padding:40px;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,0.4);color:white;">
+    <h1 style="font-size:48px; font-weight:600;">
+        Secure Messaging System 🔐
+    </h1>
+
+    <p style="font-size:20px; margin-top:10px;">
+        Send secure messages with integrity verification
+    </p>
+
+    <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" 
+         style="width:150px; margin-top:20px;">
+
+    <div style="margin-top:30px;">
+        <a href="/login" class="btn-custom login-btn">Login</a>
+
+<a href="/register" class="btn-custom register-btn">Register</a>
+    </div>
+    </body>
+
+</div>
+
+<div style="display:flex;justify-content:center;gap:30px;margin-top:60px;color:white;flex-wrap:wrap;">
+
+<div class="feature-card" style="max-width:250px;text-align:center;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,0.3);"><h3>🔐 Secure</h3>
+<p>Messages are protected with hashing and encryption for security.</p>
+</div>
+
+<div class="feature-card" style="max-width:250px;text-align:center;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,0.3);"><h3>⚡ Fast</h3>
+<p>Send messages instantly with our lightweight messaging system.</p>
+</div>
+
+<div class="feature-card" style="max-width:250px;text-align:center;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,0.3);"><h3>🛡 Integrity</h3>
+<p>Each message has a hash to verify that it was not modified.</p>
+</div>
+
+</div>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b') no-repeat center center/cover;
+      height: 100vh;
+    }
+
+    /* Overlay */
+    .overlay {
+      background: rgba(0,0,0,0.7);
+      height: 100%;
+      width: 100%;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.8);
+      padding: 15px 30px;
+      color: white;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .menu a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .menu a:hover {
+      color: #00e5ff;
+    }
+
+    /* Center Content */
+    .content {
+      text-align: center;
+      color: white;
+      margin-top: 150px;
+    }
+
+    .content h1 {
+      font-size: 40px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="overlay">
+
+  <div class="navbar">
+    <div class="logo">🔐 Secure Messaging</div>
+
+    <div class="menu">
+      <a href="/chat">Chat</a>
+      <a href="/files">Sent Files</a>
+      <a href="/verify">Verify</a>
+      <a href="/tamper">Tamper Detection</a>
+      <a href="/activity">Activity Log</a>
+      <a href="/login-history">Login History</a>
+      <a href="/settings">Settings</a>
+    </div>
+  </div>
+
+  <div class="content">
+    <h1>Welcome to Secure Messaging System</h1>
+    <p>Send Messages & Files Securely with Hash Verification 🔐</p>
+  </div>
+
+</div>
+
+</body>
+</html>

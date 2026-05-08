@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Secure File Vault</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#020617;
+  color:white;
+  min-height:100vh;
+}
+
+/* NAVBAR */
+
+.navbar{
+  width:100%;
+  padding:18px 35px;
+  background:#0f172a;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:600;
+  color:#38bdf8;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:white;
+  margin-left:18px;
+  transition:0.3s;
+  font-size:15px;
+}
+
+.nav-links a:hover{
+  color:#38bdf8;
+}
+
+/* PAGE */
+
+.container{
+  padding:35px;
+}
+
+.title{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.title h1{
+  font-size:34px;
+  margin-bottom:8px;
+}
+
+.title p{
+  color:#94a3b8;
+}
+
+/* GRID */
+
+#fileList{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:22px;
+}
+
+/* CARD */
+
+.file-card{
+  background:rgba(15,23,42,0.9);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px;
+  padding:22px;
+  transition:0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.file-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 12px 30px rgba(0,0,0,0.5);
+}
+
+/* ICON */
+
+.file-icon{
+  font-size:42px;
+  margin-bottom:15px;
+}
+
+/* FILE NAME */
+
+.file-name{
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:10px;
+  word-break:break-word;
+}
+
+/* USERS */
+
+.meta{
+  color:#94a3b8;
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+/* BUTTON */
+
+.open-btn{
+  margin-top:18px;
+  display:inline-block;
+  padding:10px 18px;
+  border-radius:10px;
+  background:#38bdf8;
+  color:black;
+  text-decoration:none;
+  font-weight:600;
+  transition:0.3s;
+}
+
+.open-btn:hover{
+  background:#0ea5e9;
+  transform:scale(1.04);
+}
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  margin-top:100px;
+  color:#94a3b8;
+  font-size:22px;
+}
+
+/* SECURITY BADGE */
+
+.badge{
+  position:absolute;
+  top:15px;
+  right:15px;
+  background:#22c55e;
+  color:black;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+  <div class="logo">
+    🔐 Secure File Vault
+  </div>
+
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/chat">Chat</a>
+    <a href="/activity">Activity</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+</div>
+
+<!-- PAGE -->
+
+<div class="container">
+
+  <div class="title">
+    <h1>📁 Secure Shared Files</h1>
+    <p>Encrypted media & document transfer system</p>
+  </div>
+
+  <div id="fileList"></div>
+
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const res = await fetch("/get-files");
+
+  const data = await res.json();
+
+  const box = document.getElementById("fileList");
+
+  box.innerHTML = "";
+
+  // only files
+  const filesOnly = data.filter(f => f.file);
+
+  // no files
+  if(filesOnly.length === 0){
+
+    box.innerHTML = `
+      <div class="empty">
+        📂 No shared files found
+      </div>
+    `;
+
+    return;
+  }
+
+  filesOnly.forEach(f => {
+
+    const url = "/uploads/" + f.file;
+
+    // extension
+    const ext = f.file.split(".").pop().toLowerCase();
+
+    let icon = "📄";
+
+    // image
+    if(["png","jpg","jpeg","gif","webp"].includes(ext)){
+      icon = "🖼";
+    }
+
+    // audio
+    else if(["mp3","wav","ogg"].includes(ext)){
+      icon = "🎵";
+    }
+
+    // video
+    else if(["mp4","mkv","avi"].includes(ext)){
+      icon = "🎬";
+    }
+
+    // pdf
+    else if(["pdf"].includes(ext)){
+      icon = "📕";
+    }
+
+    const div = document.createElement("div");
+
+    div.className = "file-card";
+
+    div.innerHTML = `
+
+      <div class="badge">
+        VERIFIED
+      </div>
+
+      <div class="file-icon">
+        ${icon}
+      </div>
+
+      <div class="file-name">
+        ${f.content}
+      </div>
+
+      <div class="meta">
+        👤 Sender: ${f.sender}
+      </div>
+
+      <div class="meta">
+        📩 Receiver: ${f.receiver}
+      </div>
+
+      <div class="meta">
+        ⏰ ${new Date(f.createdAt).toLocaleString()}
+      </div>
+
+      <a class="open-btn"
+         href="${url}"
+         target="_blank">
+
+         Open File
+      </a>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+});
+
+</script>
+
+</body>
+</html>

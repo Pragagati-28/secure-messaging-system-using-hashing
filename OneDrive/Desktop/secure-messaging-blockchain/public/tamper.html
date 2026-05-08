@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tamper Detection</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#020617;
+  color:white;
+}
+
+.navbar{
+  background:#7f1d1d;
+  padding:18px 35px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:18px;
+}
+
+.container{
+  padding:35px;
+}
+
+.title{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.title h1{
+  font-size:34px;
+  color:#ef4444;
+}
+
+.title p{
+  color:#fca5a5;
+}
+
+.alert-box{
+  background:#7f1d1d;
+  padding:18px;
+  border-radius:12px;
+  margin-bottom:25px;
+  border:1px solid #ef4444;
+}
+
+#tamperBox{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:#1e293b;
+  border-left:6px solid #ef4444;
+  padding:22px;
+  border-radius:16px;
+}
+
+.msg{
+  margin-top:12px;
+  font-size:17px;
+}
+
+.meta{
+  color:#cbd5e1;
+  margin-top:8px;
+  font-size:14px;
+}
+
+.status{
+  margin-top:14px;
+  color:#ef4444;
+  font-weight:700;
+}
+
+.empty{
+  text-align:center;
+  margin-top:100px;
+  color:#22c55e;
+  font-size:24px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+  <div>🚨 Tamper Detection Center</div>
+
+  <div>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/verify">Verify</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+</div>
+
+<div class="container">
+
+  <div class="title">
+
+    <h1>⚠ Security Tamper Alerts</h1>
+
+    <p>
+      Detecting unauthorized message modifications
+    </p>
+
+  </div>
+
+  <div class="alert-box">
+    🚨 Any modified message or manipulated data
+    appears here automatically.
+  </div>
+
+  <div id="tamperBox"></div>
+
+</div>
+
+<script>
+
+async function loadTampered(){
+
+  const res = await fetch("/verify-messages");
+
+  const data = await res.json();
+
+  const box = document.getElementById("tamperBox");
+
+  box.innerHTML = "";
+
+  // only tampered
+  const tampered = data.filter(msg => !msg.verified);
+
+  // no tampering
+  if(tampered.length === 0){
+
+    box.innerHTML = `
+      <div class="empty">
+        ✅ No tampering detected
+      </div>
+    `;
+
+    return;
+  }
+
+  tampered.forEach(msg => {
+
+    const div = document.createElement("div");
+
+    div.className = "card";
+
+    div.innerHTML = `
+
+      <div class="msg">
+        💬 ${msg.content}
+      </div>
+
+      <div class="meta">
+        👤 ${msg.sender}
+      </div>
+
+      <div class="meta">
+        📩 ${msg.receiver}
+      </div>
+
+      <div class="meta">
+        ⏰ ${new Date(msg.createdAt).toLocaleString()}
+      </div>
+
+      <div class="status">
+        ❌ MESSAGE TAMPERED
+      </div>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+loadTampered();
+
+</script>
+
+</body>
+</html>

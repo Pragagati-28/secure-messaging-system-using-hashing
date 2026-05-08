@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Chat</title>
+
+<style>
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI';
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: white;
+}
+
+/* Navbar */
+.navbar {
+  background: #020617;
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  height: 90vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 30%;
+  background: #020617;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.user {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+}
+
+.user:hover {
+  background: #1e293b;
+}
+
+/* Chat area */
+.chat-area {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Messages */
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.msg {
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  max-width: 60%;
+}
+
+.sent {
+  background: #22c55e;
+  margin-left: auto;
+}
+
+.received {
+  background: #334155;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+}
+
+.input-box {
+  display: flex;
+  padding: 15px;
+  background: #020617;
+}
+
+button {
+  padding: 10px 20px;
+  background: #38bdf8;
+  border: none;
+  cursor: pointer;
+}
+.menu-item {
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.menu-item:hover {
+  background:#1e293b;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div>💬 Secure Chat</div>
+  <div>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/logout">Logout</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h3>Users</h3>
+  </div>
+
+  <!-- Chat Area -->
+  <div class="chat-area">
+
+    <div class="messages"></div>
+
+    <div class="input-box">
+
+  <!-- ➕ Button + Menu -->
+  <div style="position:relative; margin-right:10px;">
+
+    <button onclick="toggleMenu()">➕</button>
+
+   <div id="fileMenu" style="
+  display:none;
+  position:absolute;
+  bottom:60px;
+  left:0;
+  background:#0f172a;
+  padding:15px;
+  border-radius:15px;
+  width:180px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.5);
+">
+
+  <div class="menu-item" onclick="openFile('image')">📷 Gallery</div>
+  <div class="menu-item" onclick="openFile('doc')">📄 Document</div>
+  <div class="menu-item" onclick="openFile('audio')">🎵 Audio</div>
+
+</div>
+  </div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="fileInput" style="display:none;">
+
+  <!-- Existing inputs -->
+  <input id="receiverName" placeholder="Select user" readonly>
+  <input type="hidden" id="receiver">
+
+  <input id="message" placeholder="Type message..." style="height:50px;">
+  <button onclick="sendMessage()">Send</button>
+
+</div>
+  </div>
+
+</div>
+
+<script>
+console.log("JS loaded ✅");
+</script>
+<script>
+
+function toggleMenu() {
+  const menu = document.getElementById("fileMenu");
+  menu.style.display = menu.style.display === "none" ? "block" : "none";
+}
+
+function openFile(type) {
+  const fileInput = document.getElementById("fileInput");
+
+  console.log("Opening:", type); // 🔥
+
+  if (type === "image") fileInput.accept = "image/*";
+  if (type === "doc") fileInput.accept = ".pdf,.doc,.docx";
+  if (type === "audio") fileInput.accept = "audio/*";
+
+  fileInput.click();
+}
+</script>
+<script>
+
+document.getElementById("fileInput").addEventListener("change", async function () {
+
+  const receiver = document.getElementById("receiver").value;
+  const file = this.files[0];
+
+  console.log("File selected:", file); // 🔥 debug
+
+  if (!file || !receiver) {
+    alert("Select user and file ❌");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("receiver", receiver);
+
+  const res = await fetch("/send-file", {
+    method: "POST",
+    body: formData
+  });
+
+  await res.text();
+loadMessages();   // 🔥 important
+
+});
+
+</script>
+<script>
+
+let currentUser = "";
+let selectedUser = "";
+
+async function getCurrentUser() {
+  const res = await fetch("/current-user");
+  const data = await res.json();
+  currentUser = data.email;
+}
+
+// ✅ load users
+async function loadUsers() {
+  const res = await fetch("/get-users");
+  const users = await res.json();
+  
+  console.log("Users:", users); // 🔥 ADD THIS
+
+  const sidebar = document.querySelector(".sidebar");
+  sidebar.innerHTML = "<h3>Users</h3>";
+
+  users.forEach(user => {
+
+    const div = document.createElement("div");
+    div.id = user.email;
+    div.className = "user";
+    div.innerText = user.name;
+
+    div.addEventListener("click", () => {
+      selectUser(user.email, user.name);
+    });
+
+    sidebar.appendChild(div);
+  });
+}
+
+// ✅ select user
+function selectUser(email, name) {
+  selectedUser = email;
+
+  document.getElementById("receiver").value = email;
+  document.getElementById("receiverName").value = name;
+
+  loadMessages();
+}
+
+// ✅ load messages
+async function loadMessages() {
+
+  if (!selectedUser) return;
+
+  const res = await fetch(`/get-messages?sender=${currentUser}&receiver=${selectedUser}`);
+  const messages = await res.json();
+
+  const chatBox = document.querySelector(".messages");
+  chatBox.innerHTML = "";
+
+  messages.forEach(msg => {
+
+    let type = msg.sender === currentUser ? "sent" : "received";
+
+    if (msg.file) {
+
+      const fileUrl = window.location.origin + "/uploads/" + msg.file;
+
+    console.log("FILE:", msg.file);
+    console.log("URL:", fileUrl);
+      const ext = msg.file.split('.').pop().toLowerCase();
+
+      if (["jpg","jpeg","png","gif"].includes(ext)) {
+        chatBox.innerHTML += `
+          <div class="msg ${type}">
+            <p>${msg.content}</p>
+            <img src="${fileUrl}" width="150">
+<br>
+<small style="
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+  color:#f1f5f9;
+  font-weight:500;
+  text-align:right;
+  opacity:0.9;
+">
+  ${msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}
+</small>
+          </div>
+        `;
+      }
+
+      else if (["mp3","wav"].includes(ext)) {
+  chatBox.innerHTML += `
+    <div class="msg ${type}">
+      <audio controls src="${fileUrl}"></audio>
+      <br>
+      <small style="
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+  color:#f1f5f9;
+  font-weight:500;
+  text-align:right;
+  opacity:0.9;
+">
+        ${msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}
+      </small>
+    </div>
+  `;
+}
+
+      else {
+  chatBox.innerHTML += `
+    <div class="msg ${type}">
+      <a href="${fileUrl}" target="_blank" style="color:#38bdf8;">
+        📎 ${msg.content}
+      </a>
+      <br>
+      <small style="
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+  color:#f1f5f9;
+  font-weight:500;
+  text-align:right;
+  opacity:0.9;
+">
+        ${msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}
+      </small>
+    </div>
+  `;
+}
+
+    } else {
+
+  const time = msg.createdAt
+    ? new Date(msg.createdAt).toLocaleString()
+    : "";
+
+  chatBox.innerHTML += `
+    <div class="msg ${type}">
+      ${msg.content}
+      <br>
+      <small style="
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+  color:#f1f5f9;
+  font-weight:500;
+  text-align:right;
+  opacity:0.9;
+">
+        ${time}
+      </small>
+    </div>
+  `;
+}
+
+  });
+chatBox.scrollTo({
+  top: chatBox.scrollHeight,
+  behavior: "smooth"
+});
+
+}
+
+async function init() {
+  await getCurrentUser();   // 🔥 first wait
+  await loadUsers();
+}
+
+init();
+function sendMessage() {
+
+  const receiver = document.getElementById("receiver").value;
+  const content = document.getElementById("message").value;
+
+  if (!receiver) {
+    alert("Select user ❌");
+    return;
+  }
+
+  if (!content.trim()) {
+    alert("Type message ❌");
+    return;
+  }
+
+  fetch("/send-message", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ receiver, content })
+  })
+  .then(res => res.text())
+  .then(data => {
+    console.log(data);
+  socket.emit("sendMessage", {
+      receiver,
+      content
+    });
+    document.getElementById("message").value = "";
+    loadMessages();   // 🔥 important
+  });
+
+}
+</script>
+<script>
+function openFileInNewTab(url) {
+  window.open(url, "_blank");
+}
+</script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+socket.on("newMessage", (data) => {
+
+  console.log("New Message:", data);
+  if (data.sender !== currentUser) {
+
+  const userDiv = document.getElementById(data.sender);
+
+  if (userDiv && selectedUser !== data.sender) {
+
+    if (!userDiv.innerHTML.includes("🔴")) {
+      userDiv.innerHTML += " 🔴";
+    }
+
+  }
+
+}
+
+  loadMessages();
+
+});
+</script>
+
+</body>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login History</title>
+
+<style>
+
+body{
+  margin:0;
+  font-family:Segoe UI;
+  background:#0f172a;
+  color:white;
+}
+
+.navbar{
+  background:#020617;
+  padding:15px 25px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:15px;
+}
+
+.container{
+  padding:30px;
+}
+
+.card{
+  background:#1e293b;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:12px;
+  border-left:5px solid #38bdf8;
+}
+
+.email{
+  color:#38bdf8;
+  font-weight:bold;
+}
+
+.info{
+  margin-top:8px;
+  color:#cbd5e1;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+  <div>🔐 Login History</div>
+
+  <div>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/settings">Settings</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+</div>
+
+<div class="container">
+
+  <h2>🛡 User Login Activity</h2>
+
+  <div id="historyBox"></div>
+
+</div>
+
+<script>
+
+async function loadHistory(){
+
+  const res = await fetch("/get-login-history");
+
+  const data = await res.json();
+
+  const box = document.getElementById("historyBox");
+
+  box.innerHTML = "";
+
+  data.forEach(item => {
+
+    const div = document.createElement("div");
+
+    div.className = "card";
+
+    div.innerHTML = `
+
+      <div class="email">
+        👤 ${item.email}
+      </div>
+
+      <div class="info">
+        🌐 IP Address: ${item.ip}
+      </div>
+
+      <div class="info">
+        💻 Browser: ${item.browser}
+      </div>
+
+      <div class="info">
+        ⏰ Login Time:
+        ${new Date(item.loginTime).toLocaleString()}
+      </div>
+
+    `;
+
+    box.appendChild(div);
+
+  });
+
+}
+
+loadHistory();
+
+</script>
+
+</body>
+</html>
